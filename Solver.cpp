@@ -23,8 +23,13 @@ bool Solver::internal_solve_cycle(
 //
 //
 { 
-  auto simplex = m_simplex_queue.front();
-  m_simplex_queue.pop();
+  nmsolver::ISimplex* simplex;
+  {
+    std::lock_guard<std::mutex> guard(m_mutex);
+
+    simplex = m_simplex_queue.front();
+    m_simplex_queue.pop();
+  }
 
   while (simplex->get_deviation() > a_tolerance) {
 
