@@ -30,7 +30,8 @@ namespace nmsolver
     {
       assert(size() == other->size());
 
-      auto ret = std::make_unique<VariableSetGeneric<TYPE>>(size());
+      auto copy = deep_copy();
+      auto ret = dynamic_cast<VariableSetGeneric<TYPE>*>(copy.get());
 
       for (size_t i = 0; i < size(); ++i)
       {
@@ -38,13 +39,14 @@ namespace nmsolver
         ret->set_var(i, d);
       }
 
-      return ret;
+      return copy;
     }
     std::unique_ptr<IVariableSet> add(const IVariableSet* other) const override
     {
       assert(size() == other->size());
 
-      auto ret = std::make_unique<VariableSetGeneric<TYPE>>(size());
+      auto copy = deep_copy();
+      auto ret = dynamic_cast<VariableSetGeneric<TYPE>*>(copy.get());
 
       for (size_t i = 0; i < size(); ++i)
       {
@@ -52,11 +54,12 @@ namespace nmsolver
         ret->set_var(i, d);
       }
 
-      return ret;
+      return copy;
     }
     std::unique_ptr<IVariableSet> multiply(double c) const override
     {
-      auto ret = std::make_unique<VariableSetGeneric<TYPE>>(size());
+      auto copy = deep_copy();
+      auto ret = dynamic_cast<VariableSetGeneric<TYPE>*>(copy.get());
 
       for (size_t i = 0; i < size(); ++i)
       {
@@ -64,7 +67,7 @@ namespace nmsolver
         ret->set_var(i, d);
       }
 
-      return ret;
+      return copy;
     }
 
     void set_var(size_t index, double value)
@@ -101,6 +104,7 @@ namespace nmsolver
     {
       auto r = std::make_unique<VariableSetGeneric<TYPE>>(vars_.size());
       r->vars_ = this->vars_;
+      r->limits_ = this->limits_;
       return r;
     }
     
@@ -117,9 +121,3 @@ namespace nmsolver
   };
 
 }
-
-using VariableSetDoublePtr = std::unique_ptr<
-  nmsolver::VariableSetGeneric<
-    nmsolver::ValueWrapperDouble
-  >
->;
